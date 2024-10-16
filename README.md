@@ -1,1 +1,1 @@
-# Ghost App
+# Telegram App

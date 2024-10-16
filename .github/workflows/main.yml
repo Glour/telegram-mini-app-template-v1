@@ -1,9 +1,10 @@
 name: Deploy to Server
 
 on:
-  push:
-    branches:
-      - main
+    workflow_dispatch:
+#  push:
+#    branches:
+#      - main
 
 jobs:
   deploy:
@@ -20,9 +21,9 @@ jobs:
 
       - name: Deploy to Server
         run: |
-#          ssh -o "StrictHostKeyChecking=no" root@ << 'ENDSSH'
-#          cd /home/
-#          docker compose -f ./docker/prod.yml down
-#          git pull
-#          docker compose -f ./docker/prod.yml up -d --build
-#          ENDSSH
+          ssh -o "StrictHostKeyChecking=no" root@ << 'ENDSSH'
+          cd /home/
+          docker compose -f ./docker/prod.yml down
+          git pull
+          docker compose -f ./docker/prod.yml up -d --build
+          ENDSSH
