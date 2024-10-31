@@ -4,13 +4,30 @@ services:
     container_name: tg_bot
     build:
       target: prod-build
-      context: ../
+      context: ../backend
+      dockerfile: tg_bot/Dockerfile
     env_file:
       - .env
     volumes:
-      - ../infrastructure/migrations/versions:/app/infrastructure/migrations/versions
+      - ../backend/infrastructure/migrations/versions:/app/infrastructure/migrations/versions
     environment:
       TOKEN: ${BOT_TOKEN}
+    restart: unless-stopped
+
+  # Telegram API service
+  tg_api:
+    container_name: tg_api
+    build:
+      context: ../backend
+      dockerfile: tg_api/Dockerfile
+      target: prod-build
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      POSTGRES__DB_HOST: ${POSTGRES__DB_HOST}
+      POSTGRES__DB_PORT: ${POSTGRES__DB_PORT}
     restart: unless-stopped
 
   # PostgreSQL database for bot
@@ -19,7 +36,7 @@ services:
     container_name: database
     restart: unless-stopped
     volumes:
-      - traff_db:/var/lib/postgresql/data
+      - database_volume:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: ${POSTGRES__DB_USER}
       POSTGRES_PASSWORD: ${POSTGRES__DB_PASSWORD}
@@ -32,6 +49,18 @@ services:
       timeout: 5s
       retries: 10
 
+  redis:
+    image: redis:7.0.11
+    container_name: redis
+    ports:
+      - "7379:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    restart: unless-stopped
+
   dozzle:
     image: amir20/dozzle:latest
     volumes:
@@ -40,4 +69,4 @@ services:
       - "8080:8080"
 
 volumes:
-  database:
+  database_volume:
