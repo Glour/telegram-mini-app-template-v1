@@ -117,7 +117,7 @@ async def main():
     bot = Bot(token=settings.bot.token, default=DefaultBotProperties(parse_mode="HTML"))
     dp = Dispatcher(storage=storage)
 
-    relative_path = os.path.join(os.getcwd(), "tg_bot", "locales")
+    relative_path = os.path.join(os.getcwd(), "bot", "locales")
     i18n = I18n(path=relative_path, default_locale="ru", domain="messages")
 
     dp.include_routers(*routers_list)

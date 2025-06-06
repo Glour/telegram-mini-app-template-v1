@@ -9,36 +9,34 @@ services:
       - ./logs/nginx/:/var/log/nginx/
     restart: unless-stopped
     ports:
-      - "80:80"
+      - "81:80"
 
   # Telegram bot service
-  tg_bot:
-    container_name: tg_bot
+  bot:
+    container_name: bot
     build:
       target: dev-build
-      context: ../backend
-      dockerfile: tg_bot/Dockerfile
+      context: ..
+      dockerfile: backend/bot/Dockerfile
     env_file:
-      - .env
+      - .env.dev
     volumes:
       - ../backend/infrastructure/migrations/versions:/app/infrastructure/migrations/versions
     environment:
-      TOKEN: ${BOT_TEST_TOKEN}
-      POSTGRES__DB_HOST: ${POSTGRES__DB_HOST}
-      POSTGRES__DB_PORT: ${POSTGRES__DB_PORT}
+      TOKEN: ${TEST_TOKEN}
     restart: unless-stopped
 
   # Telegram API service
-  tg_api:
-    container_name: tg_api
+  api:
+    container_name: api
     build:
-      context: ../backend
-      dockerfile: tg_api/Dockerfile
+      context: ..
+      dockerfile: backend/api/Dockerfile
       target: dev-build
     volumes:
-      - ../backend:/opt/app/
+      - ../backend:/app/
     env_file:
-      - .env
+      - .env.dev
     ports:
       - "8000:8000"
     restart: unless-stopped
@@ -56,6 +54,8 @@ services:
       POSTGRES_DB: ${POSTGRES__DB_NAME}
     expose:
       - 5432
+    ports:
+      - "5432:5432"
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES__DB_USER} -d ${POSTGRES__DB_NAME}" ]
       interval: 5s

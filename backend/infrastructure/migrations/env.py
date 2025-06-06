@@ -6,7 +6,7 @@ from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
-from infrastructure.database.models import Base, User
+from infrastructure.database.models import *
 from settings.app_settings import AppSettings
 
 settings = AppSettings()

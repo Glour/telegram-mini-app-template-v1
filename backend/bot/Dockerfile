@@ -1,9 +1,6 @@
 FROM python:3.12 AS base-build
 
 ARG APP_PATH=/app
-ARG APP_VERSION
-LABEL version=$APP_VERSION
-ENV APP_VERSION=$APP_VERSION
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
@@ -13,11 +10,13 @@ ENV PYTHONUNBUFFERED=1 \
     POETRY_HOME="/usr/local" \
     POETRY_VIRTUALENVS_CREATE=false \
     POETRY_CACHE_DIR="/var/cache/pypoetry" \
-    POETRY_NO_INTERACTION=1
+    POETRY_NO_INTERACTION=1 \
+    PYTHONPATH="${PYTHONPATH}:${APP_PATH}"
 
-# Install apt packages and poetry
+
 RUN apt-get update && apt-get install --no-install-recommends -y \
-    python3-pip  \
+    python3-pip \
+    netcat-traditional \
     build-essential \
     libpq-dev \
     && pip install "poetry==$POETRY_VERSION" \
@@ -25,32 +24,26 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 
 
 WORKDIR $APP_PATH
-COPY ../poetry.lock pyproject.toml $APP_PATH/
+COPY ../../poetry.lock pyproject.toml $APP_PATH/
+
 
 # Development build stage
 FROM base-build AS dev-build
 
 RUN poetry install --with dev
 
-COPY .. $APP_PATH
+COPY ../backend $APP_PATH
 
-CMD ["uvicorn", "tg_api.src.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+RUN chmod +x /app/bot/entrypoint.sh
+ENTRYPOINT [ "bash", "-c", "/app/bot/entrypoint.sh" ]
 
 # Production build stage
 FROM base-build AS prod-build
 
 RUN poetry install --no-dev
 
-COPY .. $APP_PATH
+COPY ../backend $APP_PATH
 
-CMD ["uvicorn", "tg_api.src.main:app", "--host", "0.0.0.0", "--port", "8000"]
-
-# Test build stage
-FROM base-build AS test-build
-
-RUN poetry install --with dev
-
-COPY .. $APP_PATH
-
-CMD ["pytest", "tests/"]
+RUN chmod +x /app/bot/entrypoint.sh
+ENTRYPOINT [ "bash", "-c", "/app/bot/entrypoint.sh" ]
 

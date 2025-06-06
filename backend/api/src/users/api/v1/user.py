@@ -17,18 +17,3 @@ async def user_info(
         async_func=repo.users.get,
         args=(user_id,)
     )
-
-
-@router.patch(
-    "/{user_id}",
-)
-async def update_user(
-        user_id: int,
-        data: dict,
-        repo: RequestsRepo = Depends(get_database_repo),
-):
-    return await generic_exception_handler(
-        async_func=repo.users.update,
-        args=(user_id,),
-        kwargs=data
-    )

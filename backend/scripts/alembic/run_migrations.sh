@@ -1,4 +1,4 @@
-docker exec tg_bot alembic upgrade head
-#docker exec tg_bot alembic downgrade -1
+docker exec bot alembic upgrade head
+#docker exec bot alembic downgrade -1
 
-#  sudo sh apps/backend/scripts/alembic/run_migrations.sh
+#  sudo sh backend/scripts/alembic/run_migrations.sh

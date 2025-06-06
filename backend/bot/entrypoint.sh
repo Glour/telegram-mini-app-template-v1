@@ -19,4 +19,4 @@ echo "Running Alembic migrations..."
 alembic upgrade head
 
 echo "Starting the application..."
-exec python3 tg_bot/main.py
+exec python3 bot/main.py
