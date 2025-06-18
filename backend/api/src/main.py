@@ -13,7 +13,7 @@ from redis import asyncio as aioredis
 from infrastructure.api_services.common.cors import setup_cors
 from infrastructure.database import setup as database
 from settings import settings
-from api.src.users.api.v1.user import router as user_router
+from api.src.users.v1.user import router as user_router
 
 
 @asynccontextmanager

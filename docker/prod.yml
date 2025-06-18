@@ -1,3 +1,7 @@
+networks:
+  shared_network:
+    driver: bridge
+
 services:
   # NGINX reverse proxy service
   nginx:
@@ -5,13 +9,16 @@ services:
     container_name: nginx_prod
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./nginx/prod.site.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/dev.site.conf:/etc/nginx/conf.d/default.conf
       - ./logs/nginx/:/var/log/nginx/
-      - /etc/letsencrypt:/etc/letsencrypt:ro
     restart: unless-stopped
     ports:
-      - "80:80"
+      - "81:80"
       - "443:443"
+    depends_on:
+      - api
+    networks:
+      - shared_network
 
   # Telegram bot service
   bot:
@@ -24,22 +31,28 @@ services:
       - .env.prod
     volumes:
       - ../backend/infrastructure/migrations/versions:/app/infrastructure/migrations/versions
-    environment:
-      TOKEN: ${BOT_TOKEN}
     restart: unless-stopped
+    depends_on:
+      - api
+    networks:
+      - shared_network
 
-  # Telegram API service
+  # API service
   api:
     container_name: api
     build:
       context: ..
       dockerfile: backend/api/Dockerfile
       target: prod-build
-    ports:
-      - "8000:8000"
+    volumes:
+      - ../backend:/app/
     env_file:
       - .env.prod
+    ports:
+      - "8000:8000"
     restart: unless-stopped
+    networks:
+      - shared_network
 
   # PostgreSQL database for bot
   postgres:
@@ -61,25 +74,32 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+    networks:
+      - shared_network
 
+  # Redis
   redis:
-    image: redis:7.0.11
+    image: redis:latest
     container_name: redis
-    ports:
-      - "7379:6379"
     healthcheck:
       test: [ "CMD", "redis-cli", "ping" ]
       interval: 5s
       timeout: 10s
       retries: 10
     restart: unless-stopped
+    networks:
+      - shared_network
 
+  # Dozzle
   dozzle:
     image: amir20/dozzle:latest
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - "8080:8080"
+    networks:
+      - shared_network
 
 volumes:
   database_volume:
+

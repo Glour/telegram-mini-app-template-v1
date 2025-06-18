@@ -12,8 +12,8 @@ request_queue = asyncio.Queue()
 async def make_request(
         method: str,
         route: str,
-        host: Optional[str] = settings.connection.match_host,
-        port: Optional[str] = settings.connection.match_port,
+        host: Optional[str],
+        port: Optional[str],
         params: Optional[Dict[str, Any]] = None,
         data: Optional[Dict[str, Any] | str] = None,
         json: Optional[Dict[str, Any]] = None,
