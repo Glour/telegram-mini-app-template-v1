@@ -2,8 +2,7 @@ from aiogram import Router, F
 from aiogram.types import ChatMemberUpdated
 
 from infrastructure.database.models.users import User
-from infrastructure.database.repo.requests import RequestsRepo
-from settings import settings
+from infrastructure.database.requests import RequestsRepo
 
 router = Router()
 

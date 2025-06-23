@@ -4,7 +4,7 @@ from aiogram import BaseMiddleware
 from aiogram.types import Message, CallbackQuery, ChatMemberUpdated
 from redis.asyncio.client import Redis
 
-from infrastructure.database.repo.requests import RequestsRepo
+from infrastructure.database.requests import RequestsRepo
 
 
 class DatabaseMiddleware(BaseMiddleware):
@@ -27,7 +27,7 @@ class DatabaseMiddleware(BaseMiddleware):
             user = await repo.users.get_or_create(
                 user_id=event.from_user.id,
                 first_name=event.from_user.first_name,
-                full_name=event.from_user.full_name,
+                last_name=event.from_user.last_name,
                 language=event.from_user.language_code,
                 username=event.from_user.username
             )

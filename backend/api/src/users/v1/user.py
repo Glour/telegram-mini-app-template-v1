@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 
 from infrastructure.api_services.common.exceptions import generic_exception_handler
-from infrastructure.database.repo.requests import RequestsRepo, get_database_repo
+from infrastructure.database.requests import RequestsRepo, get_database_repo
 
 router = APIRouter()
 

@@ -7,7 +7,7 @@ from .base import Base, TimestampMixin, TableNameMixin, int_pk
 class User(Base, TableNameMixin, TimestampMixin):
     id: Mapped[int_pk] = mapped_column(BIGINT)
     first_name: Mapped[str | None]
-    full_name: Mapped[str | None]
+    last_name: Mapped[str | None]
     username: Mapped[str | None]
     language: Mapped[str] = mapped_column(String, server_default="en")
 

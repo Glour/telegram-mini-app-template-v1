@@ -1,6 +1,6 @@
 from fastapi import Depends
 
-from infrastructure.database.repo.requests import RequestsRepo, get_database_repo
+from infrastructure.database.requests import RequestsRepo, get_database_repo
 
 
 class UserService:

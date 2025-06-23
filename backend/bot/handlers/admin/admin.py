@@ -2,7 +2,7 @@ from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import Message
 
-from infrastructure.database.repo.requests import RequestsRepo
+from infrastructure.database.requests import RequestsRepo
 
 router = Router()
 
